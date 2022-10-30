@@ -1,0 +1,87 @@
+---
+title: "HuaYangProblemSet4"
+author: "Hua Yang"
+date: "2022-10-29"
+output:
+  word_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## GBA 5140 Statistics Essentials for Business Analytics
+## Problem Set 4
+## Sampling & Sampling Distributions
+
+
+Problem 1 (Use R Version: 4.0.0+)
+Load “Data-SouthGermanCredit.csv” into RStudio. Write R code for the following tasks. Post your R code and RStudio output (console output) below each task.
+
+ ```{r }
+SGC.df <- read.csv("Data-SouthGermanCredit.csv")
+head(SGC.df)
+```
+
+**1.Compute population mean and population standard deviation of variable “amount”.**
+```{r mtcars_df}
+mu<-mean(SGC.df$amount)
+print(paste("Population mean of amount:",mu))
+N<-dim(SGC.df)[1]
+sigma<-sqrt((N-1)/N)*sd(SGC.df$amount)
+print(paste("Population standard deviation of amount:",sigma))
+```
+
+**2.Compute population proportion of variable “telephone” that takes value “yes (under customer name)”.**
+
+```{r }
+p<-sum(SGC.df$telephone=="yes (under customer name)")/N
+print(paste("Population proportion of telephone that takes value in yes (under customer name)",p))
+```
+
+ 
+
+**3.Use “1500” as seed, extract a sample of 30 observations from the population, and display the row numbers in the sample. (Hint: use row.names function to access row number, which can be used as an “ID” for each observation)**
+
+```{r}
+n<-30
+set.seed(1500)
+creditSample<-sample(row.names(SGC.df),n,replace = FALSE)
+creditdfSample<-SGC.df[match(creditSample,row.names(SGC.df)),]
+```
+
+ 
+
+**4.Compute the sample mean and sample standard deviation of variable “amount”.**
+```{r}
+x.bar<-mean(creditdfSample$amount)
+print(paste("Sample mean of amount:",x.bar))
+s<-sd(creditdfSample$amount)
+print(paste("Sample standard deviation of amount:",s))
+```
+**5.Compute the sample proportion of variable “telephone” that takes value “yes (under customer name)”.**
+```{r}
+p.bar<-sum(creditdfSample$telephone=="yes (under customer name)")/n
+print(paste("Sample proportion of telephone that takes value in yes (under customer name)",p.bar))
+```
+
+**6.Compute the standard error of sample mean of variable “amount”.**
+```{r}
+if(n/N<0.05){
+  x.bar.se<-sigma/sqrt(n)
+}else{
+  x.bar.se<-sqrt((N-n)/(N-1))*sigma/sqrt(n)
+}
+print(paste("Sample mean standard error:",x.bar.se))
+```
+**7.Compute the standard error (with normal approximation) of sample proportion of variable “telephone” that takes value “yes (under customer name)”.**
+```{r}
+if(n/N<0.05){
+  p.bar.se<-sqrt(p*(1-p)/n)
+}else{
+  p.bar.se<-sqrt((N-n)/(N-1))*sqrt(p*(1-p)/n)
+}
+print(paste("Sample proportion standard error:",p.bar.se))
+```

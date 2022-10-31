@@ -50,6 +50,7 @@ n<-30
 set.seed(1500)
 creditSample<-sample(row.names(SGC.df),n,replace = FALSE)
 creditdfSample<-SGC.df[match(creditSample,row.names(SGC.df)),]
+creditSample
 ```
 
  

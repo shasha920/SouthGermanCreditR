@@ -1,0 +1,112 @@
+---
+title: "HuaYangProblemSet6"
+author: "Hua Yang"
+date: "2022-11-08"
+output:
+  word_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## GBA 5140 Statistics Essentials for Business Analytics
+## Problem Set 6
+## Hypothesis Tests
+
+
+Problem 1
+Load “Data-SouthGermanCredit.csv” into RStudio. Write R code for the following tasks. Post your R code and RStudio output (console output) below each task.
+
+
+```{r }
+setwd('/Users/xiaoqin/Documents/Business Analytics/5140/week10')
+dataSGC<-read.csv("Data-SouthGermanCredit.csv")
+head(dataSGC)
+```
+
+**1.Treat the whole dataset as a sample. Compute sample mean and sample standard deviation of variable “amount”, and sample proportion of variable “telephone” that takes value “yes (under customer name)”.**
+```{r }
+n<-dim(dataSGC)[1]
+x.bar<-mean(dataSGC$amount)
+print(paste("Sample mean of amount:",x.bar))
+s<-sd(dataSGC$amount)
+print(paste("Sample standard deviation of amount:",s))
+p.bar<-sum(dataSGC$telephone=="yes (under customer name)")/n
+print(paste("Sample proportion of telephone that takes value in yes (under customer name)",p.bar))
+```
+
+**2.Research suggests that consumers spending has been increasing over the past few years. A research team investigating credit card users’ spending pattern hopes to find evidence from this sample that the average credit card balance, measured by variable “amount” in the dataset, exceeds $3000. Assume the population standard deviation is known to be $2800. Develop the null and alternative hypotheses, then use both p-value approach and critical value approach for hypothesis testing with 5% level of significance.**
+
+```{r}
+n<-dim(dataSGC)[1]
+x.bar<-mean(dataSGC$amount)
+mu.zero<-3000
+sigma<-2800
+x.bar.se<-sigma/sqrt(n)
+#p-value approach:
+z<-(x.bar-mu.zero)/x.bar.se
+p<-pnorm(z,mean = 0,sd=1,lower.tail = FALSE)
+alpha<-0.05
+print(paste("p=",p,"and alpha=",alpha))
+print(paste("p<=alpha is ",p<=alpha,".",sep=""))
+print(paste("H0 is ",ifelse(p<=alpha,"","not "),"rejected.",sep=""))
+#CV approach:
+z<-(x.bar-mu.zero)/x.bar.se
+alpha<-0.05
+z.alpha<-qnorm(alpha,mean=0,sd=1,lower.tail = FALSE)
+print(paste("z=",z,"and z.alpha = ",z.alpha))
+print(paste("Rejection region:[",z.alpha,",+inf)",sep=""))
+print(paste("z>=z.alpha is ",z>=z.alpha,".",sep=""))
+print(paste("H0 is ",ifelse(z>=z.alpha,"","not "),"rejected.",sep=""))
+```
+
+**3.On the other hand, the research team hopes to find evidence from this sample that the average credit card balance, measured by variable “amount” in the dataset, does NOT exceed $3400. Assume the population standard deviation is unknown. Develop the null and alternative hypotheses, then use both p-value approach and critical value approach for hypothesis testing with 5% level of significance.**
+```{r}
+n<-dim(dataSGC)[1]
+x.bar<-mean(dataSGC$amount)
+mu.zero<-3400
+s<-sd(dataSGC$amount)
+x.bar.se<-s/sqrt(n)
+#p-value approach:
+t<-(x.bar-mu.zero)/x.bar.se
+p<-pt(t,df=n-1,lower.tail = TRUE)
+alpha<-0.05
+print(paste("p=",p,"and alpha=",alpha))
+print(paste("p<=alpha is ",p<=alpha,".",sep=""))
+print(paste("H0 is ",ifelse(p<=alpha,"","not "),"rejected.",sep=""))
+#CV approach:
+t<-(x.bar-mu.zero)/x.bar.se
+alpha<-0.05
+t.alpha<-qt(alpha,df=n-1,lower.tail = TRUE)
+print(paste("t=",t,"and t.alpha=",t.alpha))
+print(paste("Rejection rejoin:(-inf,",t.alpha,"]",sep=""))
+print(paste("t<=t.alpha is ",t<=t.alpha,".",sep=""))
+print(paste("H0 is ",ifelse(t<=t.alpha,"","not "),"rejected.",sep=""))
+```
+
+**4.Previous studies showed that about 44% of the credit card users have telephone registered under their names. The research team hopes to find evidence from this sample that the proportion of credit card users who have telephone registered under their names is different from 44%. Develop the null and alternative hypotheses, then use both p-value approach and critical value approach for hypothesis testing with 1% level of significance.**
+```{r}
+n<-dim(dataSGC)[1]
+p.bar<-sum(dataSGC$telephone=="yes (under customer name)")/n
+p.zero<-0.44
+p.bar.se<-sqrt(p.zero*(1-p.zero)/n)
+#p-value
+z<-(p.bar-p.zero)/p.bar.se
+p<-2*min(pnorm(z,mean=0,sd=1,lower.tail = TRUE),
+         pnorm(z,mean=0,sd=1,lower.tail = FALSE))
+alpha=0.01
+print(paste("p=",p,"and alpha=",alpha))
+print(paste("p<=alpha is ",p<=alpha,".",sep=""))
+print(paste("H0 is ",ifelse(p<=alpha,"","not "),"rejected.",sep=""))
+#CV approach
+z<-(p.bar-p.zero)/p.bar.se
+alpha<-0.01
+z.alpha<-qnorm(alpha/2,mean=0,sd=1,lower.tail = FALSE)
+print(paste("z=",z,"and z.alpha=",z.alpha))
+print(paste("Rejection region: (-inf,",-z.alpha,"] and [",z.alpha,",+inf)",sep=""))
+print(paste("z<=-z.alpha is ",z<=-z.alpha,",z>=z.alpha is ",z>=z.alpha,".",sep=""))
+print(paste("H0 is ",ifelse(z<=-z.alpha | z>=z.alpha,"","not "),"rejected.",sep=""))
+```
